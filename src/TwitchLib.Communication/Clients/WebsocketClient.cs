@@ -74,15 +74,17 @@ namespace TwitchLib.Communication.Clients
             if (_monitorTask.IsCompleted) _monitorTask = StartMonitorTask();
         }
 
-        public bool Open()
+        public async Task<bool> Open()
         {
             try
             {
                 if (IsConnected) return true;
 
                 InitializeClient();
-                Client.ConnectAsync(new Uri(Url), _tokenSource.Token).Wait(10000);
-                if (!IsConnected) return Open();
+                var connectTask = Client.ConnectAsync(new Uri(Url), _tokenSource.Token);
+				await Task.WhenAny(Task.Delay(10000), connectTask);
+				
+                if (!IsConnected) return await Open();
                 
                 StartNetworkServices();
                 return true;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using TwitchLib.Communication.Events;
 
 namespace TwitchLib.Communication.Interfaces
@@ -100,7 +101,7 @@ namespace TwitchLib.Communication.Interfaces
         /// Connect the Client to the requested Url.
         /// </summary>
         /// <returns>Returns True if Connected, False if Failed to Connect.</returns>
-        bool Open();
+        Task<bool> Open();
 
         /// <summary>
         /// Queue a Message to Send to the server as a String.

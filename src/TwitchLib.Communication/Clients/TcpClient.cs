@@ -69,30 +69,38 @@ namespace TwitchLib.Communication.Clients
             if (_monitorTask.IsCompleted) _monitorTask = StartMonitorTask();
         }
 
-        public bool Open()
+        public async Task<bool> Open()
         {
             try
             {
                 if (IsConnected) return true;
 
-                Task.Run(() => { 
-                InitializeClient();
-                Client.Connect(_server, Port);
-                if (Options.UseSsl)
-                {
-                    var ssl = new SslStream(Client.GetStream(), false);
-                    ssl.AuthenticateAsClient(_server);
-                    _reader = new StreamReader(ssl);
-                    _writer = new StreamWriter(ssl);
-                }
-                else
-                {
-                    _reader = new StreamReader(Client.GetStream());
-                    _writer = new StreamWriter(Client.GetStream());
-                }
+                Task.Run(async () => { 
+					InitializeClient();
+					try {
+						await Client.ConnectAsync(_server, Port);
+					} catch {
+						return;
+					}
+					if (Options.UseSsl)
+					{
+						var ssl = new SslStream(Client.GetStream(), false);
+						try {
+							await ssl.AuthenticateAsClientAsync(_server);
+						} catch {
+							return;
+						}
+						_reader = new StreamReader(ssl);
+						_writer = new StreamWriter(ssl);
+					}
+					else
+					{
+						_reader = new StreamReader(Client.GetStream());
+						_writer = new StreamWriter(Client.GetStream());
+					}
                 }).Wait(10000);
 
-                if (!IsConnected) return Open();
+                if (!IsConnected) return await Open();
                 
                 StartNetworkServices();
                 return true;
