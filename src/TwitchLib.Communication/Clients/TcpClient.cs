@@ -128,7 +128,7 @@ namespace TwitchLib.Communication.Clients
         public void Reconnect()
         {
             Close();
-            Open();
+            Open().GetAwaiter().GetResult();
             OnReconnected?.Invoke(this, new OnReconnectedEventArgs());
         }
 
