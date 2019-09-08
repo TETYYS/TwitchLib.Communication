@@ -144,10 +144,10 @@ namespace TwitchLib.Communication.Clients
 							Close();
 							break;
 						case WebSocketMessageType.Text when !res.EndOfMessage:
-							sb.Append(Encoding.UTF8.GetString(buffer.Array).TrimEnd('\0'));
+							sb.Append(Encoding.UTF8.GetString(buffer.Array, 0, res.Count).TrimEnd('\0'));
 							continue;
 						case WebSocketMessageType.Text:
-							sb.Append(Encoding.UTF8.GetString(buffer.Array).TrimEnd('\0'));
+							sb.Append(Encoding.UTF8.GetString(buffer.Array, 0, res.Count).TrimEnd('\0'));
 							OnMessage?.Invoke(this, new OnMessageEventArgs() { Message = sb.ToString() });
 							break;
 						case WebSocketMessageType.Binary:
