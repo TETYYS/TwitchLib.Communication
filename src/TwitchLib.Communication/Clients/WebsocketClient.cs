@@ -125,9 +125,9 @@ namespace TwitchLib.Communication.Clients
 
 			while (IsConnected) {
 				try {
-					var buffer = new ArraySegment<byte>(new byte[1024]);
+					var buffer = new byte[1024];
 
-					var res = await WSConnection.ReceiveAsync(buffer, default);
+					var res = await WSConnection.ReceiveAsync(new ArraySegment<byte>(buffer), default);
 					
 					if (res.MessageType == WebSocketMessageType.Close) {
 						Close();
@@ -144,10 +144,10 @@ namespace TwitchLib.Communication.Clients
 							Close();
 							return;
 						case WebSocketMessageType.Text when !res.EndOfMessage:
-							sb.Append(Encoding.UTF8.GetString(buffer.Array, 0, res.Count));
+							sb.Append(Encoding.UTF8.GetString(buffer).TrimEnd('\0'));
 							break;
 						case WebSocketMessageType.Text:
-							sb.Append(Encoding.UTF8.GetString(buffer.Array, 0, res.Count));
+							sb.Append(Encoding.UTF8.GetString(buffer).TrimEnd('\0'));
 							OnMessage?.Invoke(this, new OnMessageEventArgs() { Message = sb.ToString() });
 							sb.Clear();
 							break;
