@@ -121,12 +121,12 @@ namespace TwitchLib.Communication.Clients
 
 		private async Task Reader()
 		{
-			var buffer = new ArraySegment<byte>(new byte[1024]);
-			
 			StringBuilder sb = new StringBuilder();
 
 			while (IsConnected) {
 				try {
+					var buffer = new ArraySegment<byte>(new byte[1024]);
+
 					var res = await WSConnection.ReceiveAsync(buffer, default);
 					
 					if (res.MessageType == WebSocketMessageType.Close) {
@@ -142,21 +142,20 @@ namespace TwitchLib.Communication.Clients
 					switch (res.MessageType) {
 						case WebSocketMessageType.Close:
 							Close();
-							break;
+							return;
 						case WebSocketMessageType.Text when !res.EndOfMessage:
-							sb.Append(Encoding.UTF8.GetString(buffer.Array, 0, res.Count).TrimEnd('\0'));
-							continue;
+							sb.Append(Encoding.UTF8.GetString(buffer.Array, 0, res.Count));
+							break;
 						case WebSocketMessageType.Text:
-							sb.Append(Encoding.UTF8.GetString(buffer.Array, 0, res.Count).TrimEnd('\0'));
+							sb.Append(Encoding.UTF8.GetString(buffer.Array, 0, res.Count));
 							OnMessage?.Invoke(this, new OnMessageEventArgs() { Message = sb.ToString() });
+							sb.Clear();
 							break;
 						case WebSocketMessageType.Binary:
 							break;
 						default:
 							throw new ArgumentOutOfRangeException();
 					}
-
-					sb.Clear();
 				} catch (IOException) {
 					Close();
 				} catch (Exception ex) {
