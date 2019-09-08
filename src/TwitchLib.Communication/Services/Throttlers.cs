@@ -116,7 +116,7 @@ namespace TwitchLib.Communication.Services
                             switch (_client)
                             {
                                 case WebSocketClient ws:
-                                    await ws.SendAsync(Encoding.UTF8.GetBytes(msg.Item2));
+                                    await ws.Send(msg.Item2);
                                     break;
                                 case TcpClient tcp:
                                     await tcp.SendAsync(msg.Item2);
@@ -176,7 +176,7 @@ namespace TwitchLib.Communication.Services
                             switch (_client)
                             {
                                 case WebSocketClient ws:
-                                    await ws.SendAsync(Encoding.UTF8.GetBytes(msg.Item2));
+                                    await ws.Send(msg.Item2);
                                     break;
                                 case TcpClient tcp:
                                     await tcp.SendAsync(msg.Item2);
