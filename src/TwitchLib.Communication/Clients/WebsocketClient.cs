@@ -121,7 +121,7 @@ namespace TwitchLib.Communication.Clients
 
 		private async Task Reader()
 		{
-			StringBuilder sb = new StringBuilder();
+			string sb = "";
 
 			while (IsConnected) {
 				try {
@@ -144,12 +144,12 @@ namespace TwitchLib.Communication.Clients
 							Close();
 							return;
 						case WebSocketMessageType.Text when !res.EndOfMessage:
-							sb.Append(Encoding.UTF8.GetString(buffer).TrimEnd('\0'));
+							sb += (Encoding.UTF8.GetString(buffer).TrimEnd('\0'));
 							break;
 						case WebSocketMessageType.Text:
-							sb.Append(Encoding.UTF8.GetString(buffer).TrimEnd('\0'));
-							OnMessage?.Invoke(this, new OnMessageEventArgs() { Message = sb.ToString() });
-							sb.Clear();
+							sb += (Encoding.UTF8.GetString(buffer).TrimEnd('\0'));
+							OnMessage?.Invoke(this, new OnMessageEventArgs() { Message = sb });
+							sb = "";
 							break;
 						case WebSocketMessageType.Binary:
 							break;
