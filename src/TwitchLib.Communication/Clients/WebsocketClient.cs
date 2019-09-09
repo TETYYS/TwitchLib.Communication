@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net.WebSockets;
 using System.Text;
@@ -121,7 +122,8 @@ namespace TwitchLib.Communication.Clients
 
 		private async Task Reader()
 		{
-			string sb = "";
+			string message = "";
+
 
 			while (IsConnected) {
 				try {
@@ -144,18 +146,19 @@ namespace TwitchLib.Communication.Clients
 							Close();
 							return;
 						case WebSocketMessageType.Text when !res.EndOfMessage:
-							sb += (Encoding.UTF8.GetString(buffer).TrimEnd('\0'));
-							break;
+							message += (Encoding.UTF8.GetString(buffer).TrimEnd('\0'));
+							continue;
 						case WebSocketMessageType.Text:
-							sb += (Encoding.UTF8.GetString(buffer).TrimEnd('\0'));
-							OnMessage?.Invoke(this, new OnMessageEventArgs() { Message = sb });
-							sb = "";
+							message += (Encoding.UTF8.GetString(buffer).TrimEnd('\0'));
+							OnMessage?.Invoke(this, new OnMessageEventArgs() { Message = message });
 							break;
 						case WebSocketMessageType.Binary:
 							break;
 						default:
 							throw new ArgumentOutOfRangeException();
 					}
+
+					message = "";
 				} catch (IOException) {
 					Close();
 				} catch (Exception ex) {
