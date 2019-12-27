@@ -161,6 +161,8 @@ namespace TwitchLib.Communication.Clients
 					message = "";
 				} catch (IOException) {
 					Close();
+				} catch (WebSocketException) {
+					Close();
 				} catch (Exception ex) {
 					OnError?.Invoke(this, new OnErrorEventArgs() {
 						Exception = ex
