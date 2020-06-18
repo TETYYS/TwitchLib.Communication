@@ -125,10 +125,10 @@ namespace TwitchLib.Communication.Clients
             OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs());
         }
 
-        public void Reconnect()
+        public async Task Reconnect()
         {
             Close();
-            Open().GetAwaiter().GetResult();
+            await Open();
             OnReconnected?.Invoke(this, new OnReconnectedEventArgs());
         }
 

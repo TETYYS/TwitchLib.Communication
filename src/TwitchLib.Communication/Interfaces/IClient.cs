@@ -120,7 +120,7 @@ namespace TwitchLib.Communication.Interfaces
         /// <summary>
         /// Manually reconnects the client.
         /// </summary>
-        void Reconnect();
+        Task Reconnect();
 
         void MessageThrottled(OnMessageThrottledEventArgs eventArgs);
         void SendFailed(OnSendFailedEventArgs eventArgs);
