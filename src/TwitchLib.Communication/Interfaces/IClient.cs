@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using TwitchLib.Communication.Events;
 
@@ -101,7 +102,7 @@ namespace TwitchLib.Communication.Interfaces
         /// Connect the Client to the requested Url.
         /// </summary>
         /// <returns>Returns True if Connected, False if Failed to Connect.</returns>
-        Task<bool> Open();
+        Task<bool> Open(CancellationToken CancellationToken);
 
         /// <summary>
         /// Queue a Message to Send to the server as a String.
@@ -120,7 +121,7 @@ namespace TwitchLib.Communication.Interfaces
         /// <summary>
         /// Manually reconnects the client.
         /// </summary>
-        Task Reconnect();
+        Task Reconnect(CancellationToken CancellationToken);
 
         void MessageThrottled(OnMessageThrottledEventArgs eventArgs);
         void SendFailed(OnSendFailedEventArgs eventArgs);

@@ -69,7 +69,7 @@ namespace TwitchLib.Communication.Clients
             if (_monitorTask.IsCompleted) _monitorTask = StartMonitorTask();
         }
 
-        public async Task<bool> Open()
+        public async Task<bool> Open(CancellationToken Token)
         {
             try
             {
@@ -100,7 +100,7 @@ namespace TwitchLib.Communication.Clients
 					}
                 }).Wait(10000);
 
-                if (!IsConnected) return await Open();
+                if (!IsConnected) return await Open(Token);
                 
                 StartNetworkServices();
                 return true;
@@ -125,10 +125,10 @@ namespace TwitchLib.Communication.Clients
             OnDisconnected?.Invoke(this, new OnDisconnectedEventArgs());
         }
 
-        public async Task Reconnect()
+        public async Task Reconnect(CancellationToken Token)
         {
             Close();
-            await Open();
+            await Open(Token);
             OnReconnected?.Invoke(this, new OnReconnectedEventArgs());
         }
 
@@ -254,7 +254,7 @@ namespace TwitchLib.Communication.Clients
                 }
 
                 if (needsReconnect && !_stopServices)
-                    Reconnect();
+                    Reconnect(default);
             }, _tokenSource.Token);
         }
 
